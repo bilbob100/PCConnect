@@ -8,6 +8,6 @@ You can see the screenshots at https://pcconnect.adamkhattab.co.uk/screenshots.h
 Want to just use it and not read the code?
 Go to https://pcconnect.adamkhattab.co.uk/download.html
 
-## Update
+## PCClient Update Version 3.0
 
 The new update for PCClient is made in VB.NET which allows for a slick and new control panel design to show you reminders and add reminders without using your phone.
