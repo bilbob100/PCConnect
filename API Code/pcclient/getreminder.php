@@ -16,6 +16,31 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+function decryptString($data, $apiKey) {
+    $cipher = "aes-256-cbc";
+    $data = base64_decode($data);
+    $ivlen = openssl_cipher_iv_length($cipher);
+    $iv = substr($data, 0, $ivlen);
+    $data = substr($data, $ivlen);
+
+    try {
+        if (strlen($iv) !== $ivlen) {
+            throw new Exception('IV length mismatch');
+        }
+
+        $decrypted = openssl_decrypt($data, $cipher, $apiKey, 0, $iv);
+
+        if ($decrypted === false) {
+            throw new Exception('Decryption failed');
+        }
+
+        return $decrypted;
+    } catch (Exception $e) {
+        return "Error decrypting";
+    }
+}
+
+
 // Query to check if the provided API key exists in the apikeys table
 $query = "SELECT username FROM apikeys WHERE api_key = ?";
 $stmt = $conn->prepare($query);
@@ -33,11 +58,15 @@ if ($stmt->num_rows > 0) {
     $reminderStmt = $conn->prepare($reminderQuery);
     $reminderStmt->bind_param("s", $Username);
     $reminderStmt->execute();
-    $reminderStmt->bind_result($id, $date, $time, $reminder);
+    $reminderStmt->bind_result($id, $date, $time, $encryptedReminder); // Store the encrypted reminder
 
     $reminders = array();
     while ($reminderStmt->fetch()) {
-        $reminders[] = array(
+        // Decrypt the reminder
+        $reminder = decryptString($encryptedReminder, $apiKey);
+
+        // Add the decrypted reminder to the array
+        $reminders = array(
             "id" => $id,
             "date" => $date,
             "time" => $time,
@@ -45,8 +74,8 @@ if ($stmt->num_rows > 0) {
         );
     }
 
-    // Close the database connection
-    $reminderStmt->close(); // Close this statement instead of $conn->close()
+    // Close the statement
+    $reminderStmt->close();
 
     // Output the reminders as JSON
     header('Content-Type: application/json');
