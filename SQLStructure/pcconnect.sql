@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 22, 2023 at 12:05 AM
--- Server version: 8.0.24
+-- Generation Time: Oct 30, 2023 at 11:12 PM
+-- Server version: 5.7.40-log
 -- PHP Version: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -29,8 +29,34 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `apikeys` (
   `username` varchar(255) NOT NULL,
-  `api_key` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `api_key` varchar(512) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Feedback`
+--
+
+CREATE TABLE `Feedback` (
+  `FeedbackID` int(11) NOT NULL,
+  `Name` text NOT NULL,
+  `Email` text NOT NULL,
+  `Feedback` text NOT NULL,
+  `Rating` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pcnames`
+--
+
+CREATE TABLE `pcnames` (
+  `PCID` int(11) NOT NULL,
+  `Username` text NOT NULL,
+  `PCName` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -39,13 +65,13 @@ CREATE TABLE `apikeys` (
 --
 
 CREATE TABLE `reminders` (
-  `ID` int NOT NULL,
+  `ID` int(11) NOT NULL,
   `Username` text NOT NULL,
   `Date` text NOT NULL,
   `Time` text NOT NULL,
   `Reminder` text NOT NULL,
-  `Completed` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `Completed` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -54,11 +80,12 @@ CREATE TABLE `reminders` (
 --
 
 CREATE TABLE `requests` (
-  `ID` int NOT NULL,
+  `ID` int(11) NOT NULL,
   `Username` text NOT NULL,
+  `PCName` text NOT NULL,
   `Request` text NOT NULL,
-  `Value` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `Value` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -67,10 +94,11 @@ CREATE TABLE `requests` (
 --
 
 CREATE TABLE `time` (
-  `ID` int NOT NULL,
-  `Username` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `Time` text CHARACTER SET utf8 COLLATE utf8_general_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `ID` int(11) NOT NULL,
+  `Username` text NOT NULL,
+  `PCName` text NOT NULL,
+  `Time` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -79,13 +107,14 @@ CREATE TABLE `time` (
 --
 
 CREATE TABLE `users` (
-  `id` int NOT NULL,
-  `Name` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `Username` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `id` int(11) NOT NULL,
+  `Name` text NOT NULL,
+  `Username` varchar(50) NOT NULL,
   `DateOfBirth` text NOT NULL,
   `Email` text NOT NULL,
-  `Password` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `Password` varchar(64) NOT NULL,
+  `Enabled` int(11) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Indexes for dumped tables
@@ -97,6 +126,18 @@ CREATE TABLE `users` (
 ALTER TABLE `apikeys`
   ADD PRIMARY KEY (`username`),
   ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indexes for table `Feedback`
+--
+ALTER TABLE `Feedback`
+  ADD PRIMARY KEY (`FeedbackID`);
+
+--
+-- Indexes for table `pcnames`
+--
+ALTER TABLE `pcnames`
+  ADD PRIMARY KEY (`PCID`);
 
 --
 -- Indexes for table `reminders`
@@ -127,28 +168,40 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `Feedback`
+--
+ALTER TABLE `Feedback`
+  MODIFY `FeedbackID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pcnames`
+--
+ALTER TABLE `pcnames`
+  MODIFY `PCID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `reminders`
 --
 ALTER TABLE `reminders`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `requests`
 --
 ALTER TABLE `requests`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `time`
 --
 ALTER TABLE `time`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

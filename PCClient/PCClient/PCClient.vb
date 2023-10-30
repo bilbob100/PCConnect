@@ -7,37 +7,41 @@ Imports Newtonsoft.Json
 Public Class PCClient
     Dim jss As New JavaScriptSerializer()
     Dim GetTimeUrl As String = "https://pcconnect.adamkhattab.co.uk/api/time.php" ' Replace with the actual URL of your PHP script
-    Dim PostTimeURL As String = "https://pcconnect.adamkhattab.co.uk/api/pcclient/updatetimedatabase.php" ' Replace with the actual URL of your PHP script
+    Dim PostTimeURL As String = "https://pcconnect.adamkhattab.co.uk/api/pcclient/updatepctimedatabase.php" ' Replace with the actual URL of your PHP script
     Dim findRequests As String = "https://pcconnect.adamkhattab.co.uk/api/pcclient/findrequests.php"
     Dim updateRequest As String = "https://pcconnect.adamkhattab.co.uk/api/pcclient/updaterequest.php"
     Dim getReminder As String = "https://pcconnect.adamkhattab.co.uk/api/pcclient/getreminder.php"
     Dim listReminderURL As String = "https://pcconnect.adamkhattab.co.uk/api/pcclient/listreminders.php"
+    Dim checkInternetURL As String = "https://pcconnect.adamkhattab.co.uk/api/pcclient/checkinternet.php"
     Dim Operations As New Dictionary(Of String, Action)()
     Declare Function SetSystemPowerState Lib "kernel32" (ByVal fSuspend As Integer, ByVal fForce As Integer) As Integer
     Public apiKey As String
     Dim reminderTime, reminderListTime As String
     Dim reminderDate, reminderListDate As String
     Dim Tray As NotifyIcon
-    Public ExitOption, Usercontrol, ControlPanelItem As ToolStripItem
+    Public ExitOption, Usercontrol, ControlPanelItem, AddPCItem As ToolStripItem
     Public ContextMenu As ContextMenuStrip
     Dim Output As String
     Dim reminderText, reminderListText, ReminderListTextBox, Completed As String
     Dim ID As String
-
+    Public PCName As String
 
     Public Function logoutPCClient()
         ControlPanel.Close()
+        Login.Close()
+        AddPC.Close()
         My.Settings.Username = ""
         My.Settings.Password = ""
+        My.Settings.PCName = ""
         My.Settings.Save()
         apiKey = ""
+        PCName = ""
         Usercontrol.Text = "Login"
         ContextMenu.Items.Remove(ControlPanelItem)
-
         Login.Show()
 
-
     End Function
+
     Public Sub ControlPanelItem_Click(sender As Object, e As EventArgs)
         ControlPanel.Show()
     End Sub
@@ -55,10 +59,22 @@ Public Class PCClient
 
         End If
     End Sub
+    Public Sub AddPCItem_Click(sender As Object, e As EventArgs)
+        If AddPC.Visible = True Then
+            Exit Sub
+        End If
+        AddPC.ShowDialog()
+    End Sub
 
     Public Sub PCClient_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Hide()
+        If My.Settings.FirstRun = True Then
 
+            MsgBox("PCClient is now running in the background. To access the control panel, right click on the PCClient icon in the taskbar and click on Control Panel. To exit PCClient, right click on the PCClient icon in the taskbar and click on Exit.")
+
+            My.Settings.FirstRun = False
+            My.Settings.Save()
+        End If
         Tray = New NotifyIcon
         Tray.Visible = True
         Tray.Icon = New Icon("PCClient Task Bar Logo.ico")
@@ -68,14 +84,18 @@ Public Class PCClient
             Usercontrol = ContextMenu.Items.Add("Login")
         Else
             Usercontrol = ContextMenu.Items.Add("Logout")
-            ControlPanelItem = ContextMenu.Items.Add("Control Panel")
-            AddHandler ControlPanelItem.Click, AddressOf ControlPanelItem_Click
-
+            If My.Settings.PCName = "" Then
+            Else
+                ControlPanelItem = ContextMenu.Items.Add("Control Panel")
+                AddHandler ControlPanelItem.Click, AddressOf ControlPanelItem_Click
+            End If
         End If
+
         ExitOption = ContextMenu.Items.Add("Exit")
 
         AddHandler ExitOption.Click, AddressOf ExitOption_Click
         AddHandler Usercontrol.Click, AddressOf Usercontrol_Click
+
 
         Tray.ContextMenuStrip = ContextMenu
 
@@ -89,13 +109,17 @@ Public Class PCClient
         ShowInTaskbar = False
 
         If My.Settings.Username = "" Or My.Settings.Password = "" Then
-
             Login.Show()
 
         Else
             Output = Login.LoginFunction(My.Settings.Username, My.Settings.Password)
             If Output <> "Invalid username or password." Then
                 apiKey = Output
+                If My.Settings.PCName = "" Then
+                    AddPC.ShowDialog()
+                Else
+                    PCName = My.Settings.PCName
+                End If
                 Running()
             ElseIf Output = "Invalid username or password." Then
                 Login.Show()
@@ -143,6 +167,8 @@ Public Class PCClient
     Async Function GetRemindersFunction() As Task
         Using httpClient As New HttpClient()
             httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey)
+            httpClient.DefaultRequestHeaders.Add("PCName", PCName)
+
             Dim GetRemindersResponse As HttpResponseMessage = Await httpClient.GetAsync(listReminderURL)
             Dim GetRemindersContent As String = GetRemindersResponse.Content.ReadAsStringAsync().Result
             Dim reminders As List(Of ReminderData) = JsonConvert.DeserializeObject(Of List(Of ReminderData))(GetRemindersContent)
@@ -166,12 +192,22 @@ Public Class PCClient
     Async Function Running() As Task
         Using httpClient As New HttpClient()
             httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey)
+            httpClient.DefaultRequestHeaders.Add("PCName", PCName)
             GetRemindersFunction()
             ControlPanel.RemindersTextEdit(ReminderListTextBox)
 
             While True
-
+                If My.Settings.Username = "" Or My.Settings.Password = "" Then
+                    Exit While
+                    Exit Function
+                End If
+                If My.Settings.PCName = "" Then
+                    AddPC.ShowDialog()
+                    Exit While
+                    Exit Function
+                End If
                 Try
+
                     Dim GetTimeResponse As HttpResponseMessage = Await httpClient.GetAsync(GetTimeUrl)
                     Dim GetTimeResponseContent As String = Await GetTimeResponse.Content.ReadAsStringAsync()
                     'MsgBox(GetTimeResponseContent)
@@ -179,13 +215,37 @@ Public Class PCClient
                     Dim Time As String = TimeJSON("time")
 
                     Dim TimePostData As New List(Of KeyValuePair(Of String, String))
-                    TimePostData.Add(New KeyValuePair(Of String, String)("timePython", Time))
+                    TimePostData.Add(New KeyValuePair(Of String, String)("time", Time))
                     Dim TimeContent As New FormUrlEncodedContent(TimePostData)
 
                     Dim TimeResponse As HttpResponseMessage = Await httpClient.PostAsync(PostTimeURL, TimeContent)
+                    Dim TimeResponseContent As String = Await TimeResponse.Content.ReadAsStringAsync()
+
+
+
+                    Dim CheckInternet As HttpResponseMessage = Await httpClient.GetAsync(checkInternetURL)
+                    Dim CheckInternetContent As String = Await CheckInternet.Content.ReadAsStringAsync()
+                    'MsgBox(GetTimeResponseContent)
                     'please make a code to do a get request to findRequests and do a messagebox with the data got back
 
-                    ControlPanel.internetChange(1)
+                    If CheckInternetContent = "yes" Then
+                        If ControlPanel.Internet = 0 Then
+                            ControlPanel.internetChange(1)
+
+                        End If
+
+                    ElseIf CheckInternetContent = "no" Then
+                        If ControlPanel.Internet = 1 Then
+                            ControlPanel.internetChange(0)
+
+                        End If
+                    Else
+                        If ControlPanel.Internet = 1 Then
+                            ControlPanel.internetChange(0)
+
+                        End If
+                    End If
+
 
                     Dim findRequestsResponse As HttpResponseMessage = Await httpClient.GetAsync(findRequests)
                     Dim findRequestsResponseContent As String = Await findRequestsResponse.Content.ReadAsStringAsync()
@@ -246,7 +306,7 @@ Public Class PCClient
                 End Try
 
                 ' Add a delay to avoid excessive requests
-                Await Task.Delay(TimeSpan.FromSeconds(0)) ' Adjust the delay interval as needed
+                Await Task.Delay(TimeSpan.FromSeconds(0.5)) ' Adjust the delay interval as needed
             End While
         End Using
     End Function

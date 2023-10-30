@@ -3,8 +3,7 @@
 $host = "HOST";
 $username = "USERNAME";
 $password = "PASSWORD";
-$database = "DATABASE";
-
+$database = "DATABASE";;
 
 // Create connection
 $conn = new mysqli($host, $username, $password, $database);
@@ -27,12 +26,13 @@ $validApiKeyResult = $validApiKeyStmt->get_result();
 if ($validApiKeyResult->num_rows === 1) {
     $row = $validApiKeyResult->fetch_assoc();
     $Username = $row["username"]; // Get the valid username
+    $PCName = $_SERVER['HTTP_PCNAME'];
 
     // Proceed with the SQL statement using placeholders and prepared statements
-    $sql = "SELECT Request FROM requests WHERE Value = '1' AND Username = ?";
+    $sql = "SELECT Request FROM requests WHERE Value = '1' AND Username = ? AND PCName = ?";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param("s", $Username);
+        $stmt->bind_param("ss", $Username, $PCName);
         $stmt->execute();
         $result = $stmt->get_result();
 

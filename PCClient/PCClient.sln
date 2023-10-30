@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "PCClient", "PCClient\PCClient.vbproj", "{990191EF-071E-4A77-B399-6B60950DA4D8}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PCClient Setup", "PCClient Setup\PCClient Setup.vdproj", "{B43EC5F0-C712-46F1-BE4E-5CE062846132}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{990191EF-071E-4A77-B399-6B60950DA4D8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{990191EF-071E-4A77-B399-6B60950DA4D8}.Release|x64.ActiveCfg = Release|x64
 		{990191EF-071E-4A77-B399-6B60950DA4D8}.Release|x64.Build.0 = Release|x64
+		{B43EC5F0-C712-46F1-BE4E-5CE062846132}.Debug|Any CPU.ActiveCfg = Debug
+		{B43EC5F0-C712-46F1-BE4E-5CE062846132}.Debug|x64.ActiveCfg = Debug
+		{B43EC5F0-C712-46F1-BE4E-5CE062846132}.Release|Any CPU.ActiveCfg = Release
+		{B43EC5F0-C712-46F1-BE4E-5CE062846132}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

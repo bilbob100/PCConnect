@@ -1,4 +1,29 @@
 <?php
+
+function decryptString($data, $apiKey) {
+    $cipher = "aes-256-cbc";
+    $data = base64_decode($data);
+    $ivlen = openssl_cipher_iv_length($cipher);
+    $iv = substr($data, 0, $ivlen);
+    $data = substr($data, $ivlen);
+
+    try {
+        if (strlen($iv) !== $ivlen) {
+            throw new Exception('IV length mismatch');
+        }
+
+        $decrypted = openssl_decrypt($data, $cipher, $apiKey, 0, $iv);
+
+        if ($decrypted === false) {
+            throw new Exception('Decryption failed');
+        }
+
+        return $decrypted;
+    } catch (Exception $e) {
+        return "Error decrypting";
+    }
+}
+
 // Get the API key from the X-API-Key header
 $apiKey = $_SERVER["HTTP_X_API_KEY"];
 
@@ -30,17 +55,18 @@ if ($stmt->num_rows > 0) {
     $Username = $dbUsername; // Assign the value to the $Username variable
 
     // Retrieve reminders for the provided username
-    $getRemindersQuery = "SELECT * FROM reminders WHERE username = ?";
+    $getRemindersQuery = "SELECT ID, Username, Date, Time, Reminder, Completed FROM reminders WHERE username = ? ORDER BY STR_TO_DATE(CONCAT(Date, ' ', Time), '%d/%m/%Y %H:%i') DESC";
+
     $getRemindersStmt = $conn->prepare($getRemindersQuery);
     $getRemindersStmt->bind_param("s", $Username);
     $getRemindersStmt->execute();
     $result = $getRemindersStmt->get_result();
-
     // Create an array to hold the reminders
     $reminders = array();
 
-    // Fetch reminders and add to the array
+    // Fetch reminders, decrypt the Reminder column, and add to the array
     while ($row = $result->fetch_assoc()) {
+        $row['Reminder'] = decryptString($row['Reminder'], $apiKey);
         $reminders[] = $row;
     }
 

@@ -31,11 +31,12 @@ if ($stmt->num_rows > 0) {
 
     // Retrieve data from the request
     $Request = $_POST['Request'];
+    $PCName = $_SERVER['HTTP_PCNAME'];
 
     // Use placeholders in SQL query and bind parameters
-    $sql = "UPDATE requests SET Value = 1, Request = ? WHERE Username = ?";
+    $sql = "UPDATE requests SET Value = 1, Request = ? WHERE Username = ? AND PCName = ?";
     $updateStmt = $conn->prepare($sql);
-    $updateStmt->bind_param("ss", $Request, $Username);
+    $updateStmt->bind_param("sss", $Request, $Username, $PCName);
 
     if ($updateStmt->execute()) {
         echo "Success";

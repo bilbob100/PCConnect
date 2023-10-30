@@ -3,7 +3,6 @@ $host = "HOST";
 $username = "USERNAME";
 $password = "PASSWORD";
 $database = "DATABASE";
-
 // Establish a database connection
 $conn = new mysqli($host, $username, $password, $database);
 
@@ -17,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputPassword = hash("sha256", $_POST["loginPassword"]); // Assuming password is already SHA-256 encrypted
 
     // Query to check if the provided username and password exist in the users table
-    $query = "SELECT id FROM users WHERE username = ? AND password = ?";
+    $query = "SELECT id FROM users WHERE username = ? AND password = ? and Enabled = 1";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ss", $inputUsername, $inputPassword);
     $stmt->execute();

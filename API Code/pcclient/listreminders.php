@@ -34,6 +34,7 @@ $host = "HOST";
 $username = "USERNAME";
 $password = "PASSWORD";
 $database = "DATABASE";
+
 // Establish a database connection
 $conn = new mysqli($host, $username, $password, $database);
 

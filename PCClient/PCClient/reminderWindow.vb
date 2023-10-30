@@ -49,7 +49,9 @@ Public Class reminderWindow
 
         ReminderTextL.Text = reminderTextWindow
         ReminderTextL.Location = New Point((screenWidth - ReminderTextL.Width) / 2, (screenHeight - ReminderTextL.Height) / 2)
-        DismissB.Location = New Point((screenWidth - DismissB.Width) / 2, ((screenHeight - DismissB.Height) / 2) + 75)
+        DismissB.Location = New Point((screenWidth - DismissB.Width) / 2, ((screenHeight - DismissB.Height) / 2) + 100)
+        Me.BackColor = My.Settings.ReminderBColour
+        ReminderTextL.ForeColor = My.Settings.ReminderTColour
         Me.TopMost = True
 
     End Sub

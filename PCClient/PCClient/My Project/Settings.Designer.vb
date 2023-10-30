@@ -77,6 +77,54 @@ Namespace My
                 Me("Password") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property PCName() As String
+            Get
+                Return CType(Me("PCName"),String)
+            End Get
+            Set
+                Me("PCName") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Red")>  _
+        Public Property ReminderBColour() As Global.System.Drawing.Color
+            Get
+                Return CType(Me("ReminderBColour"),Global.System.Drawing.Color)
+            End Get
+            Set
+                Me("ReminderBColour") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Black")>  _
+        Public Property ReminderTColour() As Global.System.Drawing.Color
+            Get
+                Return CType(Me("ReminderTColour"),Global.System.Drawing.Color)
+            End Get
+            Set
+                Me("ReminderTColour") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property FirstRun() As Boolean
+            Get
+                Return CType(Me("FirstRun"),Boolean)
+            End Get
+            Set
+                Me("FirstRun") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

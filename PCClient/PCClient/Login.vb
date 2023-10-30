@@ -89,7 +89,6 @@ Public Class Login
 
     Private Sub SubmitB_Click(sender As Object, e As EventArgs) Handles SubmitB.Click
 
-
         ' Create an instance of HttpClient
         Username = UsernameI.Text
         Password = PasswordI.Text
@@ -106,12 +105,11 @@ Public Class Login
             PCClient.Usercontrol.Text = "Logout"
             'apiKey = output
             MsgBox("Login Successful.")
-
             PCClient.apiKey = output
-            PCClient.ControlPanelItem = PCClient.ContextMenu.Items.Add("Control Panel")
-            AddHandler PCClient.ControlPanelItem.Click, AddressOf PCClient.ControlPanelItem_Click
+
+            AddPC.Show()
             PCClient.Running()
-            Application.Restart()
+            'Application.Restart()
         ElseIf output = "Invalid username or password." Then
             MsgBox("Invalid username or password.")
         ElseIf output.Contains("Error") Then

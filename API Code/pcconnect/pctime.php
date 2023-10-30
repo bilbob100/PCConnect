@@ -7,7 +7,6 @@ $host = "HOST";
 $username = "USERNAME";
 $password = "PASSWORD";
 $database = "DATABASE";
-
 // Establish a database connection
 $conn = new mysqli($host, $username, $password, $database);
 
@@ -28,11 +27,11 @@ if ($stmt->num_rows > 0) {
     // The API key is valid
     $stmt->fetch(); // Fetch the result into $dbUsername
     $Username = $dbUsername; // Assign the value to the $Username variable
-
+    $PCName = $_SERVER['HTTP_PCNAME'];
     // Use placeholders in SQL query and bind parameters
-    $query = "SELECT Time FROM time WHERE Username = ?";
+    $query = "SELECT Time FROM time WHERE Username = ? and PCName = ?";
     $timeStmt = $conn->prepare($query);
-    $timeStmt->bind_param("s", $Username);
+    $timeStmt->bind_param("ss", $Username, $PCName);
     $timeStmt->execute();
     
     $timeResult = $timeStmt->get_result();

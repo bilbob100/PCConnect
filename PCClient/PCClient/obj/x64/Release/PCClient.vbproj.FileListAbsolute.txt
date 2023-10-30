@@ -52,3 +52,4 @@ C:\Users\khatt\OneDrive - Joseph Chamberlain College\Desktop\PCClient VB.Net\PCC
 C:\Users\khatt\OneDrive - Joseph Chamberlain College\Desktop\PCClient VB.Net\PCClient\PCClient\obj\x64\Release\PCClient.exe
 C:\Users\khatt\OneDrive - Joseph Chamberlain College\Desktop\PCClient VB.Net\PCClient\PCClient\obj\x64\Release\PCClient.xml
 C:\Users\khatt\OneDrive - Joseph Chamberlain College\Desktop\PCClient VB.Net\PCClient\PCClient\obj\x64\Release\PCClient.pdb
+C:\Users\khatt\OneDrive - Joseph Chamberlain College\Desktop\PCClient VB.Net\PCClient\PCClient\obj\x64\Release\PCClient.AddPC.resources
