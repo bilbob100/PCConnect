@@ -7,6 +7,9 @@ You can see the screenshots at https://pcconnect.adamkhattab.co.uk/screenshots.h
 
 Want to just use it and not read the code?
 Go to https://pcconnect.adamkhattab.co.uk/download.html
+## PCClient Update Version 4.5
+
+This is a bug fix for the exit and logout buttons as they were moved to the settings panel.
 ## PCClient Update Version 4.0
 
 The new update for PCClient allows for multi PC support, so you do not need to create multiple accounts if you have multiple PCs to manage. The new settings menu allows you to change the reminder text colour and the reminder background colour to help with eye strain. 
